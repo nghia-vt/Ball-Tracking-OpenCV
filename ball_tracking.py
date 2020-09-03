@@ -1,3 +1,9 @@
+# USAGE:
+# detail: python3 ball_tracking.py --help
+# python3 ball_tracking.py --video object_tracking_example.mp4
+# python3 ball_tracking.py --camera 0 --color green
+# press the 'q' key to stop
+
 # import the necessary packages
 import argparse
 import imutils
@@ -8,20 +14,26 @@ import time
  
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-v", "--video", help="path to the (optional) video file")
+ap.add_argument("-v", "--video", help = "path to the video file")
+ap.add_argument("-cam", "--camera", type = int, default = 0, help = "index of camera")
+ap.add_argument("-cl", "--color", type = str, default = 'green', help = "select ball color (green or blue)")
 args = vars(ap.parse_args())
  
 # if a video path was not supplied, grab the reference to the webcam
 if not args.get("video", False):
-	camera = cv2.VideoCapture(0)
+	camera = cv2.VideoCapture(args["camera"])
  
 # otherwise, grab a reference to the video file
 else:
 	camera = cv2.VideoCapture(args["video"])
 
 # define the color ranges
-colorRanges = [ ((29, 86, 6), (64, 255, 255), "green"),
-				((57, 160, 0), (151, 255, 255), "blue")]
+colorList = [ ((29, 86, 6), (64, 255, 255), "green"),
+				((57, 68, 0), (151, 255, 255), "blue")]
+if args.get("color") == "green":
+	colorRange = colorList[0]
+elif args.get("color") == "blue":
+	colorRange = colorList[1]
 
 # initialize the list of tracked points, the frame counter,
 # and the coordinate deltas
@@ -54,7 +66,7 @@ while True:
 	# construct a mask for the colors in the current HSV range, then
 	# perform a series of dilations and erosions to remove any small
 	# blobs left in the mask
-	(lower, upper, colorName) = colorRanges[1];
+	(lower, upper, colorName) = colorRange;
 	mask = cv2.inRange(hsv, lower, upper)
 	mask = cv2.erode(mask, None, iterations=2)
 	mask = cv2.dilate(mask, None, iterations=2)

@@ -1,3 +1,10 @@
+# USAGE:
+# detail: python3 range_detector_HSV.py --help
+# python3 range_detector_HSV.py --video object_tracking_example.mp4
+# python3 range_detector_HSV.py --camera 0
+# press the 'Esc' key to stop
+
+import argparse
 import cv2
 import numpy as np
 
@@ -30,8 +37,16 @@ def detectColor(cam = 0):
 	cv2.destroyWindow('ROI selector')
 	return rangecolor_HSV
 
-rangecolor_HSV=detectColor(cam = 0);
-cap = cv2.VideoCapture(0)
+ap = argparse.ArgumentParser()
+ap.add_argument("-v", "--video", help = "path to the video file")
+ap.add_argument("-cam", "--camera", type = int, default = 0, help = "index of camera")
+args = vars(ap.parse_args())
+
+rangecolor_HSV = detectColor(args["camera"]);
+if not args.get("video", False):
+	cap = cv2.VideoCapture(args["camera"])
+else:
+	cap = cv2.VideoCapture(args["video"])
 
 while(True):
 
