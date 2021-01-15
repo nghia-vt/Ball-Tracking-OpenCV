@@ -42,10 +42,11 @@ ap.add_argument("-v", "--video", help = "path to the video file")
 ap.add_argument("-cam", "--camera", type = int, default = 0, help = "index of camera")
 args = vars(ap.parse_args())
 
-rangecolor_HSV = detectColor(args["camera"]);
 if not args.get("video", False):
+	rangecolor_HSV = detectColor(args["camera"]);
 	cap = cv2.VideoCapture(args["camera"])
 else:
+	rangecolor_HSV = detectColor(args["video"]);
 	cap = cv2.VideoCapture(args["video"])
 
 while(True):
